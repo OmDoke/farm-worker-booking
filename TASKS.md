@@ -19,11 +19,10 @@ Format: `- [ ] TASK-ID: description` — flip to `- [x]` only after DoD passes.
       **DoD:** OTP request is rate-limited (5/hr/mobile); verify creates a User
       on first use and returns JWT + refresh token; unit tests for both routes pass.
 
-- [ ] P1-3: Worker self-registration — POST /api/v1/workers/register,
+- [x] P1-3: Worker self-registration — POST /api/v1/workers/register,
       GET/PATCH /workers/me, POST /uploads/sign.
       **DoD:** registering sets registration_status=pending_review,
-      is_verified=false; signed upload URL issued, never raw bytes through API;
-      tests cover a rejected (unauthenticated) request and a success case.
+      is_verified=false; signed upload URL issued, never raw bytes through API; tests cover a rejected (unauthenticated) request and a success case.
 
 - [ ] P1-4: Admin worker approval — GET /admin/workers/pending,
       POST /admin/workers/:id/approve|reject.

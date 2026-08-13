@@ -13,9 +13,9 @@ beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   const uri = mongoServer.getUri();
   process.env.MONGODB_URI = uri;
-  // Ensure JWT secrets are set
   process.env.JWT_SECRET = 'test-secret';
   process.env.JWT_REFRESH_SECRET = 'test-refresh';
+  await mongoose.connect(uri);
 });
 
 afterAll(async () => {
@@ -31,11 +31,12 @@ afterEach(async () => {
 });
 
 function createRequest(body: unknown) {
-  return new Request('http://localhost', {
+  const options: RequestInit = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
+    ...(body ? { body: JSON.stringify(body) } : {})
+  };
+  return new Request('http://localhost', options);
 }
 
 describe('Auth API Routes', () => {
