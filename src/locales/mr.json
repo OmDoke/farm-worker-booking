@@ -55,5 +55,11 @@
   "status_completed": "पूर्ण झाले",
   "book_error_tasks": "कृपया किमान एक काम निवडा.",
   "book_error_failed": "बुकिंग तयार करण्यात अयशस्वी.",
-  "book_error_unexpected": "अनपेक्षित त्रुटी आली."
+  "book_error_unexpected": "अनपेक्षित त्रुटी आली.",
+  "task_pruning": "छाटणी",
+  "task_tying": "बांधणी",
+  "task_harvesting": "काढणी",
+  "task_thinning": "विरळणी",
+  "task_spraying": "फवारणी",
+  "task_weeding": "निंदणी"
 }

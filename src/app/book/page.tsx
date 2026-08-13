@@ -27,6 +27,12 @@ export default function BookPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (user && user.role === 'worker') {
+      router.push("/dashboard");
+    }
+  }, [user, router]);
+
+  useEffect(() => {
     fetch("/api/v1/services")
       .then(res => res.json())
       .then(data => {
@@ -112,12 +118,15 @@ export default function BookPage() {
             <div className="space-y-2">
               <label className="text-sm font-medium">{t('book_tasks_label')}</label>
               <div className="grid grid-cols-2 gap-2">
-                {services.map(srv => (
-                  <label key={srv.id} className="flex items-center space-x-2 border p-3 rounded-md cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
-                    <input type="checkbox" checked={tasks.includes(srv.id)} onChange={() => toggleTask(srv.id)} className="rounded text-primary-600 focus:ring-primary-500" />
-                    <span className="text-sm">{srv.name}</span>
-                  </label>
-                ))}
+                {services.map(srv => {
+                  const taskKey = `task_${srv.name.toLowerCase()}` as Parameters<typeof t>[0];
+                  return (
+                    <label key={srv.id} className="flex items-center space-x-2 border p-3 rounded-md cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
+                      <input type="checkbox" checked={tasks.includes(srv.id)} onChange={() => toggleTask(srv.id)} className="rounded text-primary-600 focus:ring-primary-500" />
+                      <span className="text-sm">{t(taskKey)}</span>
+                    </label>
+                  );
+                })}
               </div>
             </div>
 

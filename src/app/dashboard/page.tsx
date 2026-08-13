@@ -105,7 +105,10 @@ export default function DashboardPage() {
                   </CardHeader>
                   <CardContent className="pt-4 space-y-2">
                     <p className="text-sm"><strong>{t('dash_size')}:</strong> {booking.farm_size_acres} acres</p>
-                    <p className="text-sm"><strong>{t('dash_tasks')}:</strong> {booking.processes.join(', ')}</p>
+                    <p className="text-sm"><strong>{t('dash_tasks')}:</strong> {booking.processes.map(p => {
+                      const taskKey = `task_${p.toLowerCase()}` as Parameters<typeof t>[0];
+                      return t(taskKey);
+                    }).join(', ')}</p>
                     
                     {user.role === 'worker' && booking.status === 'pending_assignment' && (
                       <div className="flex space-x-2 mt-4 pt-4 border-t">

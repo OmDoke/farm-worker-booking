@@ -55,5 +55,11 @@
   "status_completed": "Completed",
   "book_error_tasks": "Please select at least one task.",
   "book_error_failed": "Failed to create booking.",
-  "book_error_unexpected": "An unexpected error occurred."
+  "book_error_unexpected": "An unexpected error occurred.",
+  "task_pruning": "Pruning",
+  "task_tying": "Tying",
+  "task_harvesting": "Harvesting",
+  "task_thinning": "Thinning",
+  "task_spraying": "Spraying",
+  "task_weeding": "Weeding"
 }
