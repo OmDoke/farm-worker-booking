@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { useAuth } from "@/lib/AuthContext";
+import { useLanguage } from "@/lib/LanguageContext";
 
 function LoginForm() {
   const [mobileNumber, setMobileNumber] = useState("");
@@ -16,6 +17,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
+  const { t } = useLanguage();
   
   const redirect = searchParams.get('redirect') || "/dashboard";
 
@@ -72,10 +74,10 @@ function LoginForm() {
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl font-bold text-primary-900 dark:text-primary-50">
-          Welcome to KrishiSeva
+          {t('login_title')}
         </CardTitle>
         <p className="text-sm text-gray-500 mt-2">
-          Login with your mobile number to access your account.
+          {t('login_subtitle')}
         </p>
       </CardHeader>
       <CardContent>
@@ -88,7 +90,7 @@ function LoginForm() {
         {step === "request" ? (
           <form onSubmit={handleRequestOtp} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Mobile Number</label>
+              <label className="text-sm font-medium">{t('login_mobile_label')}</label>
               <Input
                 type="tel"
                 placeholder="+919999999999"
@@ -98,13 +100,13 @@ function LoginForm() {
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Sending..." : "Send OTP"}
+              {loading ? t('login_btn_sending') : t('login_btn_send_otp')}
             </Button>
           </form>
         ) : (
           <form onSubmit={handleVerifyOtp} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Enter OTP</label>
+              <label className="text-sm font-medium">{t('login_otp_label')}</label>
               <Input
                 type="text"
                 placeholder="123456"
@@ -114,11 +116,11 @@ function LoginForm() {
                 maxLength={6}
               />
               <p className="text-xs text-gray-500">
-                OTP sent to {mobileNumber}. <button type="button" onClick={() => setStep("request")} className="text-primary-600">Change</button>
+                {t('login_otp_sent_to')} {mobileNumber}. <button type="button" onClick={() => setStep("request")} className="text-primary-600">{t('login_btn_change')}</button>
               </p>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Verifying..." : "Verify & Login"}
+              {loading ? t('login_btn_verifying') : t('login_btn_verify')}
             </Button>
           </form>
         )}

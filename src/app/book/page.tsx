@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/AuthContext";
+import { useLanguage } from "@/lib/LanguageContext";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { useAuth } from "@/lib/AuthContext";
 
 interface Service {
   id: string;
@@ -13,19 +14,19 @@ interface Service {
   category: string;
 }
 
-export default function BookingPage() {
+export default function BookPage() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
   
   const [services, setServices] = useState<Service[]>([]);
-  const [farmSize, setFarmSize] = useState("");
-  const [selectedProcesses, setSelectedProcesses] = useState<string[]>([]);
-  const [scheduledDate, setScheduledDate] = useState("");
+  const [size, setSize] = useState("");
+  const [date, setDate] = useState("");
+  const [tasks, setTasks] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Fetch static services list (P1-5)
     fetch("/api/v1/services")
       .then(res => res.json())
       .then(data => {
@@ -36,10 +37,8 @@ export default function BookingPage() {
       .catch(err => console.error(err));
   }, []);
 
-  const handleProcessToggle = (id: string) => {
-    setSelectedProcesses(prev => 
-      prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]
-    );
+  const toggleTask = (task: string) => {
+    setTasks(prev => prev.includes(task) ? prev.filter(t => t !== task) : [...prev, task]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,8 +48,8 @@ export default function BookingPage() {
       return;
     }
 
-    if (selectedProcesses.length === 0) {
-      setError("Please select at least one process.");
+    if (tasks.length === 0) {
+      setError(t('book_error_tasks'));
       return;
     }
 
@@ -65,9 +64,9 @@ export default function BookingPage() {
           "Authorization": `Bearer ${user.token}`
         },
         body: JSON.stringify({
-          farm_size_acres: Number(farmSize),
-          processes: selectedProcesses,
-          scheduled_date: scheduledDate,
+          farm_size_acres: Number(size),
+          processes: tasks,
+          scheduled_date: date,
           farm_location_lat: 19.9975, // Defaulting for MVP
           farm_location_lng: 73.7898,
         }),
@@ -77,10 +76,10 @@ export default function BookingPage() {
       if (res.ok && data.success) {
         router.push("/dashboard");
       } else {
-        setError(data.error?.message || "Failed to create booking");
+        setError(data.error?.message || t('book_error_failed'));
       }
-    } catch (err) {
-      setError("An unexpected error occurred");
+    } catch {
+      setError(t('book_error_unexpected'));
     } finally {
       setLoading(false);
     }
@@ -89,8 +88,8 @@ export default function BookingPage() {
   if (!user) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-4">
-        <p className="mb-4">Please login as a customer to create a booking.</p>
-        <Button onClick={() => router.push("/login?redirect=/book")}>Login Now</Button>
+        <p className="mb-4">{t('book_req_login')}</p>
+        <Button onClick={() => router.push("/login?redirect=/book")}>{t('book_btn_login')}</Button>
       </div>
     );
   }
@@ -98,66 +97,38 @@ export default function BookingPage() {
   return (
     <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4 py-12">
       <Card className="w-full max-w-2xl">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Book Farm Workers</CardTitle>
-          <p className="text-sm text-gray-500">
-            Tell us about your requirements and schedule the work.
-          </p>
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold">{t('book_title')}</CardTitle>
+          <p className="text-sm text-gray-500 mt-2">{t('book_subtitle')}</p>
         </CardHeader>
         <CardContent>
-          {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4">
-              {error}
-            </div>
-          )}
-          
+          {error && <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4">{error}</div>}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Farm Size (Acres)</label>
-              <Input
-                type="number"
-                placeholder="e.g. 5"
-                value={farmSize}
-                onChange={(e) => setFarmSize(e.target.value)}
-                min="0.1"
-                step="0.1"
-                required
-              />
+              <label className="text-sm font-medium">{t('book_size_label')}</label>
+              <Input type="number" min="0.1" step="0.1" value={size} onChange={(e) => setSize(e.target.value)} required />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Processes / Services Required</label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <label className="text-sm font-medium">{t('book_tasks_label')}</label>
+              <div className="grid grid-cols-2 gap-2">
                 {services.map(srv => (
-                  <label key={srv.id} className="flex items-center space-x-2 border p-3 rounded-md cursor-pointer hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800">
-                    <input 
-                      type="checkbox"
-                      checked={selectedProcesses.includes(srv.id)}
-                      onChange={() => handleProcessToggle(srv.id)}
-                      className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4"
-                    />
-                    <span className="text-sm font-medium">{srv.name}</span>
+                  <label key={srv.id} className="flex items-center space-x-2 border p-3 rounded-md cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
+                    <input type="checkbox" checked={tasks.includes(srv.id)} onChange={() => toggleTask(srv.id)} className="rounded text-primary-600 focus:ring-primary-500" />
+                    <span className="text-sm">{srv.name}</span>
                   </label>
                 ))}
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Scheduled Date</label>
-              <Input
-                type="date"
-                value={scheduledDate}
-                onChange={(e) => setScheduledDate(e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
-                required
-              />
+              <label className="text-sm font-medium">{t('book_date_label')}</label>
+              <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} required min={new Date().toISOString().split('T')[0]} />
             </div>
 
-            <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Creating Booking..." : "Confirm Booking"}
-              </Button>
-            </div>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? t('book_btn_submitting') : t('book_btn_submit')}
+            </Button>
           </form>
         </CardContent>
       </Card>

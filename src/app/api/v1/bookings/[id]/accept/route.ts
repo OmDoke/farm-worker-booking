@@ -28,13 +28,6 @@ export async function POST(
       );
     }
 
-    if (!booking.worker_ids.some((wId) => wId.toString() === authUser.userId)) {
-      return NextResponse.json(
-        { success: false, error: { code: 'FORBIDDEN', message: 'You are not assigned to this booking' } },
-        { status: 403 }
-      );
-    }
-
     if (booking.status !== 'pending_assignment') {
       return NextResponse.json(
         { success: false, error: { code: 'INVALID_STATE', message: 'Booking cannot be accepted in its current state' } },
@@ -42,6 +35,9 @@ export async function POST(
       );
     }
 
+    if (!booking.worker_ids.some((wId: any) => wId.toString() === authUser.userId)) {
+      booking.worker_ids.push(authUser.userId as any);
+    }
     booking.status = 'confirmed';
     await booking.save();
 

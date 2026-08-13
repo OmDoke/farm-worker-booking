@@ -41,8 +41,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     return dictionaries[language][key] || dictionaries['en'][key] || key;
   };
 
-  if (!mounted) return null; // Avoid hydration mismatch
-
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t }}>
       {children}

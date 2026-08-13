@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { useAuth } from "@/lib/AuthContext";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function WorkerRegisterPage() {
   const { user, login } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
   
   const [serviceArea, setServiceArea] = useState("");
@@ -47,7 +49,7 @@ export default function WorkerRegisterPage() {
       } else {
         setError(data.error?.message || "Failed to register profile");
       }
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred");
     } finally {
       setLoading(false);
@@ -57,19 +59,19 @@ export default function WorkerRegisterPage() {
   if (!user) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-4">
-        <p className="mb-4">Please login to register as a worker.</p>
-        <Button onClick={() => router.push("/login?redirect=/worker/register")}>Login Now</Button>
+        <p className="mb-4">{t('reg_req_login')}</p>
+        <Button onClick={() => router.push("/login?redirect=/worker/register")}>{t('nav_login')}</Button>
       </div>
     );
   }
 
   return (
     <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4 py-12">
-      <Card className="w-full max-w-lg">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Worker Registration</CardTitle>
-          <p className="text-sm text-gray-500">
-            Complete your profile to start accepting jobs on KrishiSeva.
+      <Card className="w-full max-w-xl">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold">{t('reg_title')}</CardTitle>
+          <p className="text-sm text-gray-500 mt-2">
+            {t('reg_subtitle')}
           </p>
         </CardHeader>
         <CardContent>
@@ -79,12 +81,12 @@ export default function WorkerRegisterPage() {
             </div>
           )}
           
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Service Area / District</label>
+              <label className="text-sm font-medium">{t('reg_area_label')}</label>
               <Input
                 type="text"
-                placeholder="e.g. Nashik, Maharashtra"
+                placeholder="e.g. Niphad, Nashik"
                 value={serviceArea}
                 onChange={(e) => setServiceArea(e.target.value)}
                 required
@@ -92,10 +94,10 @@ export default function WorkerRegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Daily Rate (₹)</label>
+              <label className="text-sm font-medium">{t('reg_rate_label')}</label>
               <Input
                 type="number"
-                placeholder="500"
+                placeholder="e.g. 500"
                 value={rate}
                 onChange={(e) => setRate(e.target.value)}
                 min="100"
@@ -105,7 +107,7 @@ export default function WorkerRegisterPage() {
 
             <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Submitting..." : "Submit Profile"}
+                {loading ? t('reg_btn_submitting') : t('reg_btn_submit')}
               </Button>
               <p className="text-xs text-center text-gray-500 mt-4">
                 By submitting, your profile will be sent to admins for background verification.
