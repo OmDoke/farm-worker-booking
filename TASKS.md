@@ -24,9 +24,10 @@ Format: `- [ ] TASK-ID: description` — flip to `- [x]` only after DoD passes.
       **DoD:** registering sets registration_status=pending_review,
       is_verified=false; signed upload URL issued, never raw bytes through API; tests cover a rejected (unauthenticated) request and a success case.
 
-- [ ] P1-4: Admin worker approval — GET /admin/workers/pending,
+- [x] P1-4: Admin worker approval — GET /admin/workers/pending,
       POST /admin/workers/:id/approve|reject.
-      **DoD:** approving flips is_verified=true and the worker becomes visible
+      **DoD:** endpoints return 403 if role != admin; approve sets
+      registration_status=approved, is_verified=true. and the worker becomes visible
       in GET /workers; rejection is recorded with a reason.
 
 - [ ] P1-5: Process/service category list — seed data for the 6 grape-farming
