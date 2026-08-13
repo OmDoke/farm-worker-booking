@@ -37,10 +37,9 @@ Format: `- [ ] TASK-ID: description` — flip to `- [x]` only after DoD passes.
 
 - [x] P1-6: Booking creation — POST /bookings, GET /bookings, GET /bookings/:id.
       **DoD:** booking requires farm_size_acres, processes[], scheduled_date,
-      sets status=pending_assignment; stores customer info and location.g` (or
-      `awaiting_cash_confirmation` if payment_method = cash_advance).
+      sets status=pending_assignment; stores customer info and location.
 
-- [ ] P1-7: Booking lifecycle — accept / decline / complete routes.
+- [x] P1-7: Booking lifecycle — accept / decline / complete routes.
       **DoD:** status transitions match the state machine in AGENTS.md exactly;
       invalid transitions (e.g. completing a pending booking) are rejected.
 
