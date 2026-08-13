@@ -43,7 +43,7 @@ Format: `- [ ] TASK-ID: description` — flip to `- [x]` only after DoD passes.
       **DoD:** status transitions match the state machine in AGENTS.md exactly;
       invalid transitions (e.g. completing a pending booking) are rejected.
 
-- [ ] P1-8: Customer + worker UI — homepage (native language), booking form,
+- [x] P1-8: Customer + worker UI — homepage (native language), booking form,
       worker dashboard, status tracking screens.
       **DoD:** mobile-responsive; homepage loads under 3s on throttled 4G in
       a Lighthouse run.
