@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { useAuth } from "@/lib/AuthContext";
 
 export default function WorkerRegisterPage() {
-  const { user } = useAuth();
+  const { user, login } = useAuth();
   const router = useRouter();
   
   const [serviceArea, setServiceArea] = useState("");
@@ -19,7 +19,7 @@ export default function WorkerRegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-      router.push("/login");
+      router.push("/login?redirect=/worker/register");
       return;
     }
 
@@ -41,7 +41,8 @@ export default function WorkerRegisterPage() {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        // Registration successful
+        // Registration successful. Update client tokens since role changed to worker.
+        login(data.data.accessToken, user.userId, 'worker');
         router.push("/dashboard");
       } else {
         setError(data.error?.message || "Failed to register profile");
@@ -57,7 +58,7 @@ export default function WorkerRegisterPage() {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-4">
         <p className="mb-4">Please login to register as a worker.</p>
-        <Button onClick={() => router.push("/login")}>Login Now</Button>
+        <Button onClick={() => router.push("/login?redirect=/worker/register")}>Login Now</Button>
       </div>
     );
   }

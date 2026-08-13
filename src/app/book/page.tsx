@@ -45,7 +45,7 @@ export default function BookingPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-      router.push("/login");
+      router.push("/login?redirect=/book");
       return;
     }
 
@@ -90,7 +90,7 @@ export default function BookingPage() {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-4">
         <p className="mb-4">Please login as a customer to create a booking.</p>
-        <Button onClick={() => router.push("/login")}>Login Now</Button>
+        <Button onClick={() => router.push("/login?redirect=/book")}>Login Now</Button>
       </div>
     );
   }

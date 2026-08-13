@@ -1,0 +1,17 @@
+{
+  "nav_dashboard": "Dashboard",
+  "nav_logout": "Logout",
+  "nav_login": "Login",
+  "hero_title_1": "Connecting Farmers with",
+  "hero_title_2": "Reliable Workforce",
+  "hero_subtitle": "Easily book skilled grape farming workers for pruning, tying, and harvesting. Get work done on time, every time.",
+  "hero_btn_book": "Book Workers Now",
+  "hero_btn_register": "Register as Worker",
+  "features_title": "Why Choose KrishiSeva?",
+  "feature_1_title": "Verified Workers",
+  "feature_1_desc": "All our workers are background-checked and rated by other farmers.",
+  "feature_2_title": "Instant Booking",
+  "feature_2_desc": "Schedule tasks like pruning and tying in just a few clicks.",
+  "feature_3_title": "Secure Payments",
+  "feature_3_desc": "Pay securely via UPI or choose Cash After Work. You are always protected."
+}

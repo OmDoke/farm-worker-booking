@@ -60,9 +60,17 @@ export async function POST(request: Request) {
       is_verified: false,
     });
 
+    const { generateAccessToken, generateRefreshToken } = await import('@/lib/auth');
+    const accessToken = generateAccessToken({ userId: authUser.userId, role: 'worker' });
+    const refreshToken = generateRefreshToken({ userId: authUser.userId, role: 'worker' });
+
     return NextResponse.json({
       success: true,
-      data: workerProfile,
+      data: {
+        profile: workerProfile,
+        accessToken,
+        refreshToken
+      },
     });
   } catch (error: unknown) {
     console.error('Worker Register Error:', error);
