@@ -15,7 +15,7 @@ Format: `- [ ] TASK-ID: description` — flip to `- [x]` only after DoD passes.
       free-tier DB, env config, base folder structure per AGENTS.md.
       **DoD:** `npm run build` succeeds; app boots locally; DB connection verified.
 
-- [ ] P1-2: Auth — POST /api/v1/auth/otp/request, /otp/verify, /auth/refresh.
+- [x] P1-2: Auth — POST /api/v1/auth/otp/request, /otp/verify, /auth/refresh.
       **DoD:** OTP request is rate-limited (5/hr/mobile); verify creates a User
       on first use and returns JWT + refresh token; unit tests for both routes pass.
 
