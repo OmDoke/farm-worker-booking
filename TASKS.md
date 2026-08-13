@@ -35,9 +35,9 @@ Format: `- [ ] TASK-ID: description` — flip to `- [x]` only after DoD passes.
       **DoD:** endpoint returns static/seeded list of tasks (Pruning, Tying,
       etc.) so the frontend can build the dropdowns.
 
-- [ ] P1-6: Booking creation — POST /bookings, GET /bookings, GET /bookings/:id.
+- [x] P1-6: Booking creation — POST /bookings, GET /bookings, GET /bookings/:id.
       **DoD:** booking requires farm_size_acres, processes[], scheduled_date,
-      location, payment_method; status starts at `pending` (or
+      sets status=pending_assignment; stores customer info and location.g` (or
       `awaiting_cash_confirmation` if payment_method = cash_advance).
 
 - [ ] P1-7: Booking lifecycle — accept / decline / complete routes.
