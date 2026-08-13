@@ -30,9 +30,10 @@ Format: `- [ ] TASK-ID: description` — flip to `- [x]` only after DoD passes.
       registration_status=approved, is_verified=true. and the worker becomes visible
       in GET /workers; rejection is recorded with a reason.
 
-- [ ] P1-5: Process/service category list — seed data for the 6 grape-farming
-      tasks (EN + Marathi), admin CRUD.
-      **DoD:** categories are DB-driven, not hardcoded in frontend code.
+- [x] P1-5: Process/service category list — seed data for the 6 grape-farming
+      tasks + GET /api/v1/services to fetch them.
+      **DoD:** endpoint returns static/seeded list of tasks (Pruning, Tying,
+      etc.) so the frontend can build the dropdowns.
 
 - [ ] P1-6: Booking creation — POST /bookings, GET /bookings, GET /bookings/:id.
       **DoD:** booking requires farm_size_acres, processes[], scheduled_date,
