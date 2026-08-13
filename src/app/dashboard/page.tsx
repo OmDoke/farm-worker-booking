@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { MapPin, CalendarDays, ClipboardList } from "lucide-react";
 
 interface Booking {
   _id: string;
@@ -68,34 +69,47 @@ export default function DashboardPage() {
   if (!user || loading) return <div className="p-8 text-center">Loading...</div>;
 
   return (
-    <div className="flex-1 bg-gray-50 dark:bg-gray-900 p-4 sm:p-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 capitalize">{t('dash_title')} - {user.role}</h1>
+    <div className="flex-1 p-4 sm:p-8 relative overflow-hidden">
+      {/* Decorative background */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-400/10 blur-[120px] rounded-full pointer-events-none"></div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        <h1 className="text-4xl font-bold mb-10 font-display capitalize text-gradient">{t('dash_title')} - {user.role}</h1>
         
-        <div className="grid grid-cols-1 gap-6">
-          <h2 className="text-xl font-semibold">{t('dash_bookings')}</h2>
+        <div className="grid grid-cols-1 gap-8">
+          <h2 className="text-2xl font-semibold flex items-center gap-2">
+            <ClipboardList className="text-primary-500" />
+            {t('dash_bookings')}
+          </h2>
           {bookings.length === 0 ? (
-            <Card>
-              <CardContent className="p-8 text-center text-gray-500">
-                {t('dash_no_bookings')}
+            <Card className="glass-panel border-white/40 dark:border-gray-800/60 p-2">
+              <CardContent className="p-12 text-center text-gray-500">
+                <p className="text-lg mb-6">{t('dash_no_bookings')}</p>
                 {user.role === 'customer' && (
-                  <div className="mt-4">
-                    <Button onClick={() => router.push('/book')}>{t('dash_btn_create')}</Button>
-                  </div>
+                  <Button size="lg" onClick={() => router.push('/book')} className="shadow-primary-500/30">
+                    {t('dash_btn_create')}
+                  </Button>
                 )}
               </CardContent>
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {bookings.map((booking) => (
-                <Card key={booking._id}>
-                  <CardHeader className="pb-3 border-b">
-                    <CardTitle className="flex justify-between items-center text-lg">
-                      <span>{t('dash_date')}: {new Date(booking.scheduled_date).toLocaleDateString(language === 'mr' ? 'mr-IN' : 'en-US')}</span>
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        booking.status === 'completed' ? 'bg-green-100 text-green-800' :
-                        booking.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
-                        'bg-yellow-100 text-yellow-800'
+                <Card key={booking._id} className="glass-panel border-white/40 dark:border-gray-800/60 p-1 flex flex-col h-full">
+                  <CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-800/50">
+                    <CardTitle className="flex justify-between items-start text-lg">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                          <CalendarDays className="w-4 h-4" /> {t('dash_date')}
+                        </span>
+                        <span className="font-bold text-gray-900 dark:text-gray-100">
+                          {new Date(booking.scheduled_date).toLocaleDateString(language === 'mr' ? 'mr-IN' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </span>
+                      </div>
+                      <span className={`text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm ${
+                        booking.status === 'completed' ? 'bg-green-100 text-green-800 border border-green-200' :
+                        booking.status === 'confirmed' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
+                        'bg-amber-100 text-amber-800 border border-amber-200'
                       }`}>
                         {booking.status === 'pending_assignment' ? t('status_pending_assignment') : 
                          booking.status === 'confirmed' ? t('status_confirmed') : 
@@ -103,22 +117,41 @@ export default function DashboardPage() {
                       </span>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="pt-4 space-y-2">
-                    <p className="text-sm"><strong>{t('dash_size')}:</strong> {booking.farm_size_acres} acres</p>
-                    <p className="text-sm"><strong>{t('dash_tasks')}:</strong> {booking.processes.map(p => {
-                      const taskKey = `task_${p.toLowerCase()}` as Parameters<typeof t>[0];
-                      return t(taskKey);
-                    }).join(', ')}</p>
+                  <CardContent className="pt-6 space-y-4 flex-1 flex flex-col">
+                    <div className="space-y-3 flex-1">
+                      <div className="flex items-start gap-3">
+                        <div className="mt-0.5 p-2 bg-primary-50 dark:bg-primary-900/20 rounded-lg text-primary-600">
+                          <MapPin className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider">{t('dash_size')}</p>
+                          <p className="font-semibold">{booking.farm_size_acres} Acres</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start gap-3">
+                        <div className="mt-0.5 p-2 bg-accent-50 dark:bg-accent-900/20 rounded-lg text-accent-600">
+                          <ClipboardList className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider">{t('dash_tasks')}</p>
+                          <p className="font-semibold">{booking.processes.map(p => {
+                            const taskKey = `task_${p.toLowerCase()}` as Parameters<typeof t>[0];
+                            return t(taskKey);
+                          }).join(', ')}</p>
+                        </div>
+                      </div>
+                    </div>
                     
                     {user.role === 'worker' && booking.status === 'pending_assignment' && (
-                      <div className="flex space-x-2 mt-4 pt-4 border-t">
-                        <Button size="sm" onClick={() => handleWorkerAction(booking._id, 'accept')}>{t('dash_btn_accept')}</Button>
+                      <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800/50">
+                        <Button size="lg" className="w-full" onClick={() => handleWorkerAction(booking._id, 'accept')}>{t('dash_btn_accept')}</Button>
                       </div>
                     )}
                     
                     {user.role === 'worker' && booking.status === 'confirmed' && (
-                      <div className="mt-4 pt-4 border-t">
-                        <Button size="sm" className="w-full" onClick={() => handleWorkerAction(booking._id, 'complete')}>{t('dash_btn_complete')}</Button>
+                      <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800/50">
+                        <Button size="lg" className="w-full" onClick={() => handleWorkerAction(booking._id, 'complete')}>{t('dash_btn_complete')}</Button>
                       </div>
                     )}
                   </CardContent>

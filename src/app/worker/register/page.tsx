@@ -72,35 +72,39 @@ export default function WorkerRegisterPage() {
   }
 
   return (
-    <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4 py-12">
-      <Card className="w-full max-w-xl">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">{t('reg_title')}</CardTitle>
-          <p className="text-sm text-gray-500 mt-2">
+    <div className="flex-1 flex items-center justify-center p-4 py-12 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary-400/10 blur-[100px] rounded-full pointer-events-none"></div>
+
+      <Card className="w-full max-w-xl relative z-10 glass-panel border-white/40 dark:border-gray-800/60 p-2">
+        <CardHeader className="text-center pb-2">
+          <CardTitle className="text-3xl font-bold font-display text-gradient mb-2">{t('reg_title')}</CardTitle>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
             {t('reg_subtitle')}
           </p>
         </CardHeader>
         <CardContent>
           {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4">
+            <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-6">
               {error}
             </div>
           )}
           
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">{t('reg_area_label')}</label>
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="space-y-3">
+              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">{t('reg_area_label')}</label>
               <Input
                 type="text"
                 placeholder="e.g. Niphad, Nashik"
                 value={serviceArea}
                 onChange={(e) => setServiceArea(e.target.value)}
                 required
+                className="h-14 text-lg"
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">{t('reg_rate_label')}</label>
+            <div className="space-y-3">
+              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">{t('reg_rate_label')}</label>
               <Input
                 type="number"
                 placeholder="e.g. 500"
@@ -108,11 +112,12 @@ export default function WorkerRegisterPage() {
                 onChange={(e) => setRate(e.target.value)}
                 min="100"
                 required
+                className="h-14 text-lg"
               />
             </div>
 
-            <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
-              <Button type="submit" className="w-full" disabled={loading}>
+            <div className="pt-4 border-t border-gray-100 dark:border-gray-800/50">
+              <Button type="submit" className="w-full" size="lg" disabled={loading}>
                 {loading ? t('reg_btn_submitting') : t('reg_btn_submit')}
               </Button>
               <p className="text-xs text-center text-gray-500 mt-4">

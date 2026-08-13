@@ -71,15 +71,20 @@ function LoginForm() {
   };
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold text-primary-900 dark:text-primary-50">
-          {t('login_title')}
-        </CardTitle>
-        <p className="text-sm text-gray-500 mt-2">
-          {t('login_subtitle')}
-        </p>
-      </CardHeader>
+    <div className="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary-400/20 blur-[100px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-accent-400/20 blur-[100px] rounded-full pointer-events-none"></div>
+      
+      <Card className="w-full max-w-md relative z-10 glass-panel border-white/40 dark:border-gray-800/60 p-2">
+        <CardHeader className="text-center pb-2">
+          <CardTitle className="text-3xl font-bold font-display text-gradient mb-2">
+            {t('login_title')}
+          </CardTitle>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {t('login_subtitle')}
+          </p>
+        </CardHeader>
       <CardContent>
         {error && (
           <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4">
@@ -119,23 +124,22 @@ function LoginForm() {
                 {t('login_otp_sent_to')} {mobileNumber}. <button type="button" onClick={() => setStep("request")} className="text-primary-600">{t('login_btn_change')}</button>
               </p>
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full mt-4" disabled={loading} size="lg">
               {loading ? t('login_btn_verifying') : t('login_btn_verify')}
             </Button>
           </form>
         )}
       </CardContent>
     </Card>
+    </div>
   );
 }
 
 export default function LoginPage() {
   return (
-    <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
-      <Suspense fallback={<div>Loading...</div>}>
-        <LoginForm />
-      </Suspense>
-    </div>
+    <Suspense fallback={<div className="flex-1 flex items-center justify-center">Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }
 
