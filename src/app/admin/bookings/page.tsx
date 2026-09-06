@@ -102,7 +102,14 @@ export default function AdminBookingsPage() {
                     <div className="text-xs text-gray-500">{booking.customer_id?.mobile_number}</div>
                   </td>
                   <td className="p-4 text-gray-600 dark:text-gray-300">
-                    {new Date(booking.scheduled_date).toLocaleDateString()}
+                    {(() => {
+                      try {
+                        const date = new Date(booking.scheduled_date);
+                        return isNaN(date.getTime()) ? 'Invalid Date' : date.toLocaleDateString();
+                      } catch (e) {
+                        return 'Invalid Date';
+                      }
+                    })()}
                   </td>
                   <td className="p-4 text-gray-600 dark:text-gray-300">{booking.farm_size_acres}</td>
                   <td className="p-4">
@@ -115,7 +122,7 @@ export default function AdminBookingsPage() {
                     </span>
                   </td>
                   <td className="p-4 text-gray-600 dark:text-gray-300">
-                    {booking.worker_ids?.map(w => w.name || 'Worker').join(', ') || <span className="text-gray-400 italic">Unassigned</span>}
+                    {booking.worker_ids?.map(w => w?.name || 'Worker').join(', ') || <span className="text-gray-400 italic">Unassigned</span>}
                   </td>
                   <td className="p-4 text-right space-x-2">
                     {booking.status === 'pending_assignment' && (

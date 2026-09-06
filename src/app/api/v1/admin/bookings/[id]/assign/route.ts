@@ -60,49 +60,6 @@ export async function POST(
       );
     }
 
-    // Get SLA from settings (default 120 min)
-    const slaMins = parseInt((await getSetting('acceptance_sla_minutes')) || '120', 10);
-    const responseDeadline = new Date(Date.now() + slaMins * 60 * 1000);
-
-    // Find or create the assignment slot
-    let assignment;
-    if (assignment_id) {
-      assignment = await BookingAssignment.findOneAndUpdate(
-        { _id: assignment_id, booking_id: bookingId },
-        {
-          worker_id,
-          status: 'assigned',
-          assigned_at: new Date(),
-          response_deadline: responseDeadline,
-        },
-        { returnDocument: 'after' }
-      );
-      if (!assignment) {
-        return NextResponse.json(
-          { success: false, error: { code: 'NOT_FOUND', message: 'Assignment not found' } },
-          { status: 404 }
-        );
-      }
-    } else {
-      // Take the first open slot
-      assignment = await BookingAssignment.findOneAndUpdate(
-        { booking_id: bookingId, status: 'open' },
-        {
-          worker_id,
-          status: 'assigned',
-          assigned_at: new Date(),
-          response_deadline: responseDeadline,
-        },
-        { returnDocument: 'after' }
-      );
-      if (!assignment) {
-        return NextResponse.json(
-          { success: false, error: { code: 'NO_OPEN_SLOTS', message: 'No open assignment slots on this booking' } },
-          { status: 400 }
-        );
-      }
-    }
-
     // Add worker to booking.worker_ids if not already there
     if (!booking.worker_ids.some((id) => id.toString() === worker_id)) {
       booking.worker_ids.push(worker_id as unknown as import('mongoose').Types.ObjectId);
@@ -112,8 +69,7 @@ export async function POST(
     booking.status = 'confirmed';
     await booking.save();
 
-    const action = assignment_id ? 'reassign_booking' : 'assign_booking';
-    await writeAuditLog(authUser.userId, action, 'BookingAssignment', assignment._id.toString(), {
+    await writeAuditLog(authUser.userId, 'assign_booking', 'Booking', booking._id.toString(), {
       worker_id,
       booking_id: bookingId,
     });
@@ -133,7 +89,7 @@ export async function POST(
       notifyWorkerAssigned(workerToNotify.mobile_number, location, timeAndDate).catch(console.error);
     }
 
-    return NextResponse.json({ success: true, data: { booking, assignment } });
+    return NextResponse.json({ success: true, data: { booking } });
   } catch (error: unknown) {
     console.error('Admin Assign Error:', error);
     return NextResponse.json(
