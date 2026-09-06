@@ -6,7 +6,7 @@ import { BookingAssignment } from '@/lib/models/BookingAssignment';
 import { WorkerProfile } from '@/lib/models/WorkerProfile';
 import { writeAuditLog } from '@/lib/models/AuditLog';
 import { getSetting } from '@/lib/models/PlatformSettings';
-import { notifyBookingAccepted } from '@/lib/notifications';
+import { notifyBookingAccepted, notifyWorkerAssigned } from '@/lib/notifications';
 
 /**
  * POST /api/v1/admin/bookings/:id/assign
@@ -106,8 +106,11 @@ export async function POST(
     // Add worker to booking.worker_ids if not already there
     if (!booking.worker_ids.some((id) => id.toString() === worker_id)) {
       booking.worker_ids.push(worker_id as unknown as import('mongoose').Types.ObjectId);
-      await booking.save();
     }
+    
+    // Per new dispatch flow: assigning a worker instantly confirms the booking
+    booking.status = 'confirmed';
+    await booking.save();
 
     const action = assignment_id ? 'reassign_booking' : 'assign_booking';
     await writeAuditLog(authUser.userId, action, 'BookingAssignment', assignment._id.toString(), {
@@ -116,10 +119,18 @@ export async function POST(
     });
 
     // Notify the customer
-    const populated = await Booking.findById(bookingId).populate('customer_id', 'mobile_number');
+    const populated = await Booking.findById(bookingId).populate('customer_id', 'mobile_number').populate('worker_ids', 'mobile_number');
     const customerMobile = (populated?.customer_id as unknown as { mobile_number?: string })?.mobile_number;
     if (customerMobile) {
       notifyBookingAccepted(customerMobile, bookingId).catch(console.error);
+    }
+
+    // Notify the assigned worker per dispatch workflow
+    const workerToNotify = (populated?.worker_ids as unknown as { _id: string, mobile_number: string }[])?.find(w => w._id.toString() === worker_id);
+    if (workerToNotify && workerToNotify.mobile_number) {
+      const location = `Lat: ${booking.farm_location_lat}, Lng: ${booking.farm_location_lng}`; // Fallback since no address string exists
+      const timeAndDate = new Date(booking.scheduled_date).toLocaleString();
+      notifyWorkerAssigned(workerToNotify.mobile_number, location, timeAndDate).catch(console.error);
     }
 
     return NextResponse.json({ success: true, data: { booking, assignment } });

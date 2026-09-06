@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Farm Worker Booking Platform
+
+A localized marketplace connecting farmers (customers) with farm workers in rural areas (e.g., Nashik). The platform features role-based access, multilingual support (English & Marathi), and an Admin Dispatch model to streamline operations.
+
+## Tech Stack
+- **Framework:** Next.js (App Router)
+- **Database:** MongoDB (via Mongoose)
+- **Styling:** Tailwind CSS + custom UI components
+- **Authentication:** Custom JWT + OTP-based login (Simulated SMS)
+- **Localization:** React Context-based i18n (`mr.json`, `en.json`)
+
+## Features Overview
+- **Multilingual UI:** Full Marathi and English support.
+- **Role-based Architecture:** Segregated logic and dashboards for Admins, Customers, and Workers.
+- **Admin Dispatch Workflow:** Admins assign verified workers to incoming jobs, triggering instant SMS notifications to workers.
+- **Payments Integration:** Razorpay integration for online payments + Cash on Delivery support.
+
+For a detailed breakdown of features by role, see [FEATURES.md](./FEATURES.md).
 
 ## Getting Started
 
-First, run the development server:
+1. **Install Dependencies:**
+   ```bash
+   npm install
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2. **Environment Variables:**
+   Copy `.env.example` to `.env` (if provided) and fill in:
+   - `MONGODB_URI`
+   - `JWT_SECRET`
+   - `MSG91_AUTH_KEY` (for SMS)
+   - `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. **Run Development Server:**
+   ```bash
+   npm run dev
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+4. **Testing Admin Access:**
+   If you need an admin account, you can run the seed script:
+   ```bash
+   npx ts-node --env-file=.env scripts/seed-admin.ts
+   ```
+   Then login with `+919527764368` (or the number you configured).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Architecture Details
+- **APIs:** All endpoints live under `/api/v1/*`.
+- **Protected Routes:** Middleware and `AuthContext` protect pages like `/dashboard`, `/book`, and `/admin`.
+- **Database Models:** Located in `src/lib/models/`. Uses reference-based queries to populate related documents (e.g., populating `worker_ids` in `Booking`).

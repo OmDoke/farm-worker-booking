@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { MapPin, CalendarDays, ClipboardList } from "lucide-react";
+import { MapPin, CalendarDays, ClipboardList, Users } from "lucide-react";
 
 interface Booking {
   _id: string;
@@ -14,6 +14,10 @@ interface Booking {
   scheduled_date: string;
   status: string;
   processes: string[];
+  customer_id?: { name?: string; mobile_number: string };
+  worker_ids?: { _id: string; name?: string; mobile_number: string }[];
+  farm_location_lat?: number;
+  farm_location_lng?: number;
 }
 
 export default function DashboardPage() {
@@ -141,13 +145,38 @@ export default function DashboardPage() {
                           }).join(', ')}</p>
                         </div>
                       </div>
+
+                      {user.role === 'worker' && booking.customer_id && (
+                        <div className="flex items-start gap-3">
+                          <div className="mt-0.5 p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-green-600">
+                            <MapPin className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider">Customer & Location</p>
+                            <p className="font-semibold">{booking.customer_id.name || 'Customer'}</p>
+                            <p className="text-sm text-gray-600">{booking.customer_id.mobile_number}</p>
+                            <p className="text-xs text-gray-500 mt-1 truncate">
+                              Lat: {booking.farm_location_lat}, Lng: {booking.farm_location_lng}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {user.role === 'customer' && booking.worker_ids && booking.worker_ids.length > 0 && (
+                        <div className="flex items-start gap-3 mt-4 pt-4 border-t border-gray-100 dark:border-gray-800/50">
+                          <div className="mt-0.5 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600">
+                            <Users className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider">Assigned Worker</p>
+                            <p className="font-semibold">{booking.worker_ids[0].name || 'Worker'}</p>
+                            <p className="text-sm text-gray-600">{booking.worker_ids[0].mobile_number}</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                     
-                    {user.role === 'worker' && booking.status === 'pending_assignment' && (
-                      <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800/50">
-                        <Button size="lg" className="w-full" onClick={() => handleWorkerAction(booking._id, 'accept')}>{t('dash_btn_accept')}</Button>
-                      </div>
-                    )}
+
                     
                     {user.role === 'worker' && booking.status === 'confirmed' && (
                       <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800/50">

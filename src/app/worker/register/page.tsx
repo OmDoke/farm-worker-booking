@@ -13,6 +13,7 @@ export default function WorkerRegisterPage() {
   const { t } = useLanguage();
   const router = useRouter();
   
+  const [name, setName] = useState("");
   const [serviceArea, setServiceArea] = useState("");
   const [rate, setRate] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,6 +43,7 @@ export default function WorkerRegisterPage() {
           "Authorization": `Bearer ${user.token}`
         },
         body: JSON.stringify({
+          name: name,
           service_area: serviceArea,
           rate: Number(rate),
         }),
@@ -91,6 +93,18 @@ export default function WorkerRegisterPage() {
           )}
           
           <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="space-y-3">
+              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">{t('reg_name_label')}</label>
+              <Input
+                type="text"
+                placeholder="e.g. Ramesh Patil"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="h-14 text-lg"
+              />
+            </div>
+
             <div className="space-y-3">
               <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">{t('reg_area_label')}</label>
               <Input

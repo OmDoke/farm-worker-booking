@@ -69,12 +69,8 @@ export async function GET(request: Request) {
     if (authUser.role === 'customer') {
       query = { customer_id: authUser.userId };
     } else if (authUser.role === 'worker') {
-      query = { 
-        $or: [
-          { status: 'pending_assignment' },
-          { worker_ids: authUser.userId }
-        ]
-      };
+      // Per new dispatch workflow, workers only see jobs explicitly assigned to them
+      query = { worker_ids: authUser.userId };
     }
     // admin gets all bookings
 

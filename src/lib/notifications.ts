@@ -114,3 +114,14 @@ export async function notifyJobCompleted(
     message: `Your farm work (${bookingId}) has been marked complete. Please rate your worker in the app.`,
   });
 }
+
+export async function notifyWorkerAssigned(
+  workerMobile: string,
+  location: string,
+  timeAndDate: string
+): Promise<void> {
+  await sendSms({
+    to: formatMobile(workerMobile),
+    message: `You have to go to ${location} at ${timeAndDate}.`,
+  });
+}
