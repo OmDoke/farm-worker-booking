@@ -61,5 +61,11 @@
   "task_harvesting": "Harvesting",
   "task_thinning": "Thinning",
   "task_spraying": "Spraying",
-  "task_weeding": "Weeding"
+  "task_weeding": "Weeding",
+  "task_srv_1": "Pruning",
+  "task_srv_2": "Tying",
+  "task_srv_3": "Harvesting",
+  "task_srv_4": "Thinning",
+  "task_srv_5": "Spraying",
+  "task_srv_6": "Weeding"
 }

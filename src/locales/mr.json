@@ -61,5 +61,11 @@
   "task_harvesting": "काढणी",
   "task_thinning": "विरळणी",
   "task_spraying": "फवारणी",
-  "task_weeding": "निंदणी"
+  "task_weeding": "निंदणी",
+  "task_srv_1": "छाटणी",
+  "task_srv_2": "बांधणी",
+  "task_srv_3": "काढणी",
+  "task_srv_4": "विरळणी",
+  "task_srv_5": "फवारणी",
+  "task_srv_6": "निंदणी"
 }

@@ -4,6 +4,7 @@ export interface IPayment extends Document {
   booking_id: mongoose.Types.ObjectId;
   method: 'cash_after_work' | 'online' | 'cash_advance';
   amount: number;
+  commission_amount: number; // platform's cut; deducted before worker payout
   status: 'pending' | 'paid' | 'refunded';
   gateway_reference?: string;
   gateway_event_id?: string; // stored for idempotency — prevent double-processing webhooks
@@ -21,6 +22,7 @@ const PaymentSchema: Schema<IPayment> = new Schema(
       required: true,
     },
     amount: { type: Number, required: true },
+    commission_amount: { type: Number, default: 0 },
     status: {
       type: String,
       enum: ['pending', 'paid', 'refunded'],

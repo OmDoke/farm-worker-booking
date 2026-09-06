@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 import { WorkerProfile } from '@/lib/models/WorkerProfile';
+import { writeAuditLog } from '@/lib/models/AuditLog';
 
 export async function POST(
   request: Request,
@@ -33,9 +34,11 @@ export async function POST(
         $set: {
           registration_status: 'approved',
           is_verified: true,
+          reviewed_by: authUser.userId,
+          reviewed_at: new Date(),
         }
       },
-      { new: true }
+      { returnDocument: 'after' }
     ).populate('user_id', 'name mobile_number address');
 
     if (!profile) {
@@ -45,6 +48,7 @@ export async function POST(
       );
     }
 
+    await writeAuditLog(authUser.userId, 'approve_worker', 'WorkerProfile', workerId);
     return NextResponse.json({ success: true, data: profile });
   } catch (error: unknown) {
     console.error('Approve Worker Error:', error);

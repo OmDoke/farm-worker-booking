@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 import { WorkerProfile } from '@/lib/models/WorkerProfile';
+import { writeAuditLog } from '@/lib/models/AuditLog';
 
 export async function POST(
   request: Request,
@@ -27,15 +28,21 @@ export async function POST(
     await dbConnect();
     
     const { id: workerId } = await params;
+    const body = await request.json().catch(() => ({}));
+    const reason = body?.reason?.trim() || 'No reason provided';
+
     const profile = await WorkerProfile.findByIdAndUpdate(
       workerId,
       {
         $set: {
           registration_status: 'rejected',
           is_verified: false,
+          rejection_reason: reason,
+          reviewed_by: authUser.userId,
+          reviewed_at: new Date(),
         }
       },
-      { new: true }
+      { returnDocument: 'after' }
     ).populate('user_id', 'name mobile_number address');
 
     if (!profile) {
@@ -45,6 +52,7 @@ export async function POST(
       );
     }
 
+    await writeAuditLog(authUser.userId, 'reject_worker', 'WorkerProfile', workerId, { reason });
     return NextResponse.json({ success: true, data: profile });
   } catch (error: unknown) {
     console.error('Reject Worker Error:', error);
