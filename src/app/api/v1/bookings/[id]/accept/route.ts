@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 import { Booking } from '@/lib/models/Booking';
+import { notifyBookingAccepted } from '@/lib/notifications';
 
 export async function POST(
   request: Request,
@@ -35,11 +36,20 @@ export async function POST(
       );
     }
 
-    if (!booking.worker_ids.some((wId: any) => wId.toString() === authUser.userId)) {
-      booking.worker_ids.push(authUser.userId as any);
+    if (!booking.worker_ids.some((wId: unknown) => (wId as { toString: () => string }).toString() === authUser.userId)) {
+      booking.worker_ids.push(authUser.userId as unknown as import('mongoose').Types.ObjectId);
     }
     booking.status = 'confirmed';
     await booking.save();
+
+    // Notify the customer that their booking was accepted (non-fatal)
+    const populatedBooking = await Booking.findById(bookingId).populate('customer_id', 'mobile_number');
+    const customerMobile = (populatedBooking?.customer_id as unknown as { mobile_number?: string })?.mobile_number;
+    if (customerMobile) {
+      notifyBookingAccepted(customerMobile, bookingId).catch((err) =>
+        console.error('Accept booking notification error:', err)
+      );
+    }
 
     return NextResponse.json({ success: true, data: booking });
   } catch (error: unknown) {

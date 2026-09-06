@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 import { Booking } from '@/lib/models/Booking';
+import { notifyJobCompleted } from '@/lib/notifications';
 
 export async function POST(
   request: Request,
@@ -44,6 +45,15 @@ export async function POST(
 
     booking.status = 'completed';
     await booking.save();
+
+    // Notify the customer that work is done (non-fatal)
+    const populatedBooking = await Booking.findById(bookingId).populate('customer_id', 'mobile_number');
+    const customerMobile = (populatedBooking?.customer_id as unknown as { mobile_number?: string })?.mobile_number;
+    if (customerMobile) {
+      notifyJobCompleted(customerMobile, bookingId).catch((err) =>
+        console.error('Complete booking notification error:', err)
+      );
+    }
 
     return NextResponse.json({ success: true, data: booking });
   } catch (error: unknown) {

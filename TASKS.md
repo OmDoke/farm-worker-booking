@@ -52,23 +52,23 @@ Format: `- [ ] TASK-ID: description` — flip to `- [x]` only after DoD passes.
 
 ## Phase 2 — Transactions (payments, trust)
 
-- [ ] P2-1: Online payment — POST /payments/initiate (Razorpay order + UPI QR
+- [x] P2-1: Online payment — POST /payments/initiate (Razorpay order + UPI QR
       payload), POST /payments/webhook.
       **DoD:** webhook verifies Razorpay signature and is idempotent (dedupes
       on event ID — write a test that sends the same event twice and asserts
       only one state change); QR code renders in the UI.
 
-- [ ] P2-2: Cash confirmation — POST /payments/:id/confirm-cash.
+- [x] P2-2: Cash confirmation — POST /payments/:id/confirm-cash.
       **DoD:** works for both cash_after_work and cash_advance; for
       cash_advance it also flips Booking status from
       awaiting_cash_confirmation → accepted; only worker or admin roles can
       call it (test an unauthorized customer call is rejected).
 
-- [ ] P2-3: Ratings and reviews — POST /bookings/:id/review.
+- [x] P2-3: Ratings and reviews — POST /bookings/:id/review.
       **DoD:** only callable after status=completed; average_rating on
       WorkerProfile recomputes correctly (add a test with 3 reviews).
 
-- [ ] P2-4: Notifications — SMS/app notifications for request, acceptance,
+- [x] P2-4: Notifications — SMS/app notifications for request, acceptance,
       payment confirmation, completion.
       **DoD:** each event in the lifecycle triggers exactly one notification;
       no duplicate sends on retry.
